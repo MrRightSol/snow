@@ -8,6 +8,8 @@ public class DbFieldDto {
     private String columnName;
     private String dataType;
     private int ordinalPosition;
+    private Integer length;
+    private String columnConstraints;
 
     public Long getId() {
         return id;
@@ -39,5 +41,17 @@ public class DbFieldDto {
 
     public void setOrdinalPosition(int ordinalPosition) {
         this.ordinalPosition = ordinalPosition;
+    }
+    public Integer getLength() {
+        return length;
+    }
+    public void setLength(Integer length) {
+        this.length = length;
+    }
+    public String getColumnConstraints() {
+        return columnConstraints;
+    }
+    public void setColumnConstraints(String columnConstraints) {
+        this.columnConstraints = columnConstraints;
     }
 }

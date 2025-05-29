@@ -1,10 +1,12 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.ConstraintMode;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "api_key")
+@Table(name = "GW_api_key")
 public class ApiKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +16,8 @@ public class ApiKey {
     private String key;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "permission_set_id")
+    @JoinColumn(name = "permission_set_id",
+                foreignKey = @jakarta.persistence.ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private PermissionSet permissionSet;
 
     @Column(name = "expires_at", nullable = false)

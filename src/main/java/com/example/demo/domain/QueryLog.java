@@ -1,17 +1,20 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.ConstraintMode;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "query_log")
+@Table(name = "GW_query_log")
 public class QueryLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "api_key_id")
+    @JoinColumn(name = "api_key_id",
+                foreignKey = @jakarta.persistence.ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ApiKey apiKey;
 
     @Column(name = "raw_sql", nullable = false, length = 2000)

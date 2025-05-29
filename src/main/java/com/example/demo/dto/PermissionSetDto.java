@@ -6,6 +6,8 @@ package com.example.demo.dto;
 public class PermissionSetDto {
     private Long id;
     private String name;
+    // user IDs associated with this PermissionSet
+    private java.util.List<Long> userIds;
 
     public Long getId() {
         return id;
@@ -18,8 +20,14 @@ public class PermissionSetDto {
     public String getName() {
         return name;
     }
+    public java.util.List<Long> getUserIds() {
+        return userIds;
+    }
 
     public void setName(String name) {
         this.name = name;
+    }
+    public void setUserIds(java.util.List<Long> userIds) {
+        this.userIds = userIds;
     }
 }

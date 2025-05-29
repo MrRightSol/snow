@@ -17,4 +17,8 @@ public interface DbObjectRepository extends JpaRepository<DbObject, Long> {
     @Modifying
     @Transactional
     void deleteByDataSourceConfig_Id(Long dataSourceConfigId);
+    /**
+     * Checks if a DbObject with the given name exists for a DataSource.
+     */
+    boolean existsByDataSourceConfig_IdAndObjectName(Long dataSourceConfigId, String objectName);
 }

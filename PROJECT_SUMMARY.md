@@ -89,10 +89,13 @@ _Generated on project bootstrap to capture current prototype state._
   - Audit logs: QueryLog
   - Multi-DB config: DataSourceConfig
   - Metadata import: DbObject, DbField
+  - SFTP proxy: SftpServerConfig, SftpCredential, SftpPermission, SftpObject
 - Services:
   - QueryService: validate API key, simple SQL rewrite, execution, logging
   - DataSourceService: dynamic DataSourceConfig handling, Hikari pools, JdbcTemplate per server
   - MetadataService: import and list table/view and column metadata
+  - SftpService: manages embedded SFTP proxy (SSHD), authentication, download/upload
+  - SftpMetadataService: import and store directory listing metadata
 - Controllers & DTOs:
   - QueryController (`/api/query`)
   - DataSourceController (`/api/datasources`)
@@ -100,6 +103,11 @@ _Generated on project bootstrap to capture current prototype state._
   - PermissionController (`/api/permissions`)
   - ApiKeyController (`/api/apikeys`)
   - QueryLogController (`/api/logs`)
+  - SftpServerController (`/api/sftp-servers`)
+  - SftpCredentialController (`/api/sftp-servers/{serverId}/credentials`)
+  - SftpPermissionController (`/api/permissions/sets/{setId}/sftp`)
+  - SftpMetadataController (`/api/sftp-servers/{serverId}/objects` and `/import`)
+  - SftpFileController (`/api/sftp-servers/{serverId}/download`, `/upload`)
 - Configuration & Init:
   - In-memory H2 (schema auto-update) with `TestDataInitializer` seed data
   - Microsoft SQL Server JDBC driver support (mssql-jdbc)

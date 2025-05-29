@@ -6,7 +6,7 @@ import jakarta.persistence.*;
  * Configuration for an external database connection.
  */
 @Entity
-@Table(name = "datasource_config")
+@Table(name = "GW_datasource_config")
 public class DataSourceConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

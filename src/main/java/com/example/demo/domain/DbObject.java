@@ -1,6 +1,8 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.ConstraintMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +10,15 @@ import java.util.List;
  * Represents a database object (table or view) for a given DataSource.
  */
 @Entity
-@Table(name = "db_object")
+@Table(name = "GW_db_object")
 public class DbObject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "datasource_config_id")
+    @JoinColumn(name = "datasource_config_id",
+                foreignKey = @jakarta.persistence.ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private DataSourceConfig dataSourceConfig;
 
     @Column(name = "object_name", nullable = false)

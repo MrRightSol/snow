@@ -1,16 +1,19 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.ConstraintMode;
 
 @Entity
-@Table(name = "row_permission")
+@Table(name = "GW_row_permission")
 public class RowPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "permission_set_id")
+    @JoinColumn(name = "permission_set_id",
+                foreignKey = @jakarta.persistence.ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private PermissionSet permissionSet;
 
     @Column(name = "object_name", nullable = false)

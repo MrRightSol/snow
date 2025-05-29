@@ -38,6 +38,7 @@ public class PermissionController {
             PermissionSetDto dto = new PermissionSetDto();
             dto.setId(ps.getId());
             dto.setName(ps.getName());
+            dto.setUserIds(new java.util.ArrayList<>(ps.getUserIds()));
             return dto;
         }).collect(Collectors.toList());
     }
@@ -46,10 +47,14 @@ public class PermissionController {
     public PermissionSetDto createSet(@RequestBody CreatePermissionSetRequest req) {
         PermissionSet ps = new PermissionSet();
         ps.setName(req.getName());
+        if (req.getUserIds() != null) {
+            ps.setUserIds(new java.util.HashSet<>(req.getUserIds()));
+        }
         ps = psRepo.save(ps);
         PermissionSetDto dto = new PermissionSetDto();
         dto.setId(ps.getId());
         dto.setName(ps.getName());
+        dto.setUserIds(new java.util.ArrayList<>(ps.getUserIds()));
         return dto;
     }
 

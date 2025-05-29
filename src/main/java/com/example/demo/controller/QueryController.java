@@ -15,10 +15,14 @@ public class QueryController {
     }
 
     @PostMapping("/query")
-    public QueryResponse execute(@RequestHeader("X-API-KEY") String apiKey,
-                                 @RequestBody QueryRequest request) {
-        return queryService.executeQuery(apiKey,
-                                         request.getSql(),
-                                         request.getServerId());
+    public QueryResponse execute(
+            @RequestHeader("X-API-KEY") String apiKey,
+            @RequestHeader("X-USER-ID") Long userId,
+            @RequestBody QueryRequest request) {
+        return queryService.executeQuery(
+                apiKey,
+                userId,
+                request.getSql(),
+                request.getServerId());
     }
 }
