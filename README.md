@@ -96,7 +96,7 @@ Columns/parameters import into `GW_db_field` with:
 
 ## Permission API
 
-Manage PermissionSets and grant permissions (fields, rows, SFTP):
+Manage PermissionSets and grant permissions (fields, rows, operations, SFTP):
 
 - **List PermissionSets**  
   GET `/api/permissions/sets`
@@ -113,19 +113,35 @@ Manage PermissionSets and grant permissions (fields, rows, SFTP):
 - **Grant field permission**  
   POST `/api/permissions/sets/{id}/fields`  
   ```json
-  { "objectName":"test_table", "fields":"id,name" }
+  { "objectName":"test_table", "fields":["id","name"] }
   ```
 
 - **Revoke field permission**  
   DELETE `/api/permissions/fields/{fieldId}`
 
--- **Grant row permission**  
+- **Grant row permission**
   POST `/api/permissions/sets/{id}/rows`  
   ```json
-  { "objectName":"test_table", "expression":"id = 1" }
+  { "objectName":"test_table", "fieldName":"id", "operator":"=", "value":"1" }
   ```
 
--- **Revoke row permission**  
+- **Revoke row permission**  
+  DELETE `/api/permissions/rows/{rowId}`
+
+ - **List operation permissions for a set**  
+  GET `/api/permissions/sets/{setId}/operations`
+
+ - **Grant operation permission**  
+  POST `/api/permissions/sets/{setId}/operations`  
+  ```json
+  [
+  { "objectName":"test_table", "operations":["C","R","U","D"] }
+  ]
+  ```
+
+ - **Revoke operation permission**  
+  DELETE `/api/permissions/sets/{setId}/operations/{permId}`
+
 ### SFTP Permissions
 
 Grant or revoke access to SFTP servers and path patterns:

@@ -28,6 +28,7 @@
 | RowPermission    | row_permission  | RLS expressions per table                   |
 | ApiKey           | api_key         | Key string + expiry + link to PermissionSet |
 | QueryLog         | query_log       | Audit log of all queries executed          |
+| OperationPermission | GW_operation_permission | Operation-level permissions (CRUD and schema operations) per object per PermissionSet |
 
 ## Package Structure
 ```
@@ -84,7 +85,7 @@ _Generated on project bootstrap to capture current prototype state._
 ## Implementation To Date
 ### Server-side (Spring Boot)
 - Entities & Repositories:
-  - Core permissions: PermissionSet, FieldPermission, RowPermission
+  - Core permissions: PermissionSet, FieldPermission, RowPermission, OperationPermission
   - API keys: ApiKey
   - Audit logs: QueryLog
   - Multi-DB config: DataSourceConfig
@@ -92,6 +93,8 @@ _Generated on project bootstrap to capture current prototype state._
   - SFTP proxy: SftpServerConfig, SftpCredential, SftpPermission, SftpObject
 - Services:
   - QueryService: validate API key, simple SQL rewrite, execution, logging
+  - SimpleSqlParserService: simple SQL parser for fallback parsing and basic table/field extraction
+  - SqlRewriter: AST-based SQL rewriting engine for enforcing field, row, and operation permissions
   - DataSourceService: dynamic DataSourceConfig handling, Hikari pools, JdbcTemplate per server
   - MetadataService: import and list table/view and column metadata
   - SftpService: manages embedded SFTP proxy (SSHD), authentication, download/upload
@@ -101,6 +104,7 @@ _Generated on project bootstrap to capture current prototype state._
   - DataSourceController (`/api/datasources`)
   - MetadataController (`/api/datasources/{id}/import`, `/objects`, `/objects/{id}/fields`)
   - PermissionController (`/api/permissions`)
+  - OperationPermissionController (`/api/permissions/sets/{setId}/operations`)
   - ApiKeyController (`/api/apikeys`)
   - QueryLogController (`/api/logs`)
   - SftpServerController (`/api/sftp-servers`)

@@ -1,18 +1,19 @@
 package com.example.demo.dto;
 
+import java.util.List;
+
 /**
- * DTO representing a FieldPermission.
+ * DTO representing an OperationPermission.
  */
-public class FieldPermissionDto {
+public class OperationPermissionDto {
     private Long id;
     private Long permissionSetId;
     private String objectName;
-    private java.util.List<String> fields;
+    private List<String> operations;
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -20,7 +21,6 @@ public class FieldPermissionDto {
     public Long getPermissionSetId() {
         return permissionSetId;
     }
-
     public void setPermissionSetId(Long permissionSetId) {
         this.permissionSetId = permissionSetId;
     }
@@ -28,16 +28,14 @@ public class FieldPermissionDto {
     public String getObjectName() {
         return objectName;
     }
-
     public void setObjectName(String objectName) {
         this.objectName = objectName;
     }
 
-    public java.util.List<String> getFields() {
-        return fields;
+    public List<String> getOperations() {
+        return operations;
     }
-
-    public void setFields(java.util.List<String> fields) {
-        this.fields = fields;
+    public void setOperations(List<String> operations) {
+        this.operations = operations;
     }
 }

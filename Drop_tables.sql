@@ -26,4 +26,18 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_permission_set]') AND type in (N'U'))
 DROP TABLE [dbo].[gw_permission_set]
 GO
-
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_sftp_permission]') AND type in (N'U'))
+DROP TABLE [dbo].[gw_sftp_permission]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_sftp_credential]') AND type in (N'U'))
+DROP TABLE [dbo].[gw_sftp_credential]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_sftp_object]') AND type in (N'U'))
+DROP TABLE [dbo].[gw_sftp_object]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_sftp_server]') AND type in (N'U'))
+DROP TABLE [dbo].[gw_sftp_server]
+GO
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gw_operation_permission]') AND type in (N'U'))
+DROP TABLE [dbo].[gw_operation_permission]
+GO

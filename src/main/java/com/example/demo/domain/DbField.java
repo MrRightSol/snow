@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.ConstraintMode;
 
@@ -33,6 +34,9 @@ public class DbField {
 
     @Column(name = "column_constraints", length = 2000)
     private String columnConstraints;
+
+    @Column(name = "effective_at", nullable = false)
+    private LocalDateTime effectiveAt;
 
     public Long getId() {
         return id;
@@ -81,6 +85,14 @@ public class DbField {
     }
     public String getColumnConstraints() {
         return columnConstraints;
+    }
+
+    public LocalDateTime getEffectiveAt() {
+        return effectiveAt;
+    }
+
+    public void setEffectiveAt(LocalDateTime effectiveAt) {
+        this.effectiveAt = effectiveAt;
     }
     public void setColumnConstraints(String columnConstraints) {
         this.columnConstraints = columnConstraints;

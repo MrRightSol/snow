@@ -4,17 +4,12 @@ package com.example.demo.dto;
  * Payload for creating a new RowPermission.
  */
 public class CreateRowPermissionRequest {
-    private Long permissionSetId;
     private String objectName;
-    private String expression;
+    private String fieldName;
+    private String operator;
+    private String value;
 
-    public Long getPermissionSetId() {
-        return permissionSetId;
-    }
 
-    public void setPermissionSetId(Long permissionSetId) {
-        this.permissionSetId = permissionSetId;
-    }
 
     public String getObjectName() {
         return objectName;
@@ -24,11 +19,27 @@ public class CreateRowPermissionRequest {
         this.objectName = objectName;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

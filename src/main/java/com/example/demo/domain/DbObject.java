@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.ConstraintMode;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class DbObject {
 
     @Column(name = "object_type", nullable = false)
     private String objectType;
+
+    @Column(name = "effective_at", nullable = false)
+    private LocalDateTime effectiveAt;
 
     @OneToMany(mappedBy = "dbObject", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DbField> fields = new ArrayList<>();
@@ -64,6 +68,14 @@ public class DbObject {
 
     public List<DbField> getFields() {
         return fields;
+    }
+
+    public LocalDateTime getEffectiveAt() {
+        return effectiveAt;
+    }
+
+    public void setEffectiveAt(LocalDateTime effectiveAt) {
+        this.effectiveAt = effectiveAt;
     }
 
     public void setFields(List<DbField> fields) {

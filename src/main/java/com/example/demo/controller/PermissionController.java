@@ -68,21 +68,40 @@ public class PermissionController {
     }
 
     @PostMapping("/sets/{id}/fields")
-    public FieldPermissionDto addField(@PathVariable Long id,
-                                       @RequestBody CreateFieldPermissionRequest req) {
+    public java.util.List<FieldPermissionDto> addFields(@PathVariable Long id,
+                                                         @RequestBody java.util.List<CreateFieldPermissionRequest> reqs) {
         PermissionSet ps = psRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        FieldPermission fp = new FieldPermission();
-        fp.setPermissionSet(ps);
-        fp.setObjectName(req.getObjectName());
-        fp.setFields(req.getFields());
-        fp = fpRepo.save(fp);
-        FieldPermissionDto dto = new FieldPermissionDto();
-        dto.setId(fp.getId());
-        dto.setPermissionSetId(id);
-        dto.setObjectName(fp.getObjectName());
-        dto.setFields(fp.getFields());
-        return dto;
+        return reqs.stream().map(req -> {
+            String objectName = req.getObjectName();
+            java.util.List<String> fieldsList = req.getFields();
+            String csv = String.join(",", fieldsList);
+            // Check existing permission for this set and object
+            java.util.Optional<FieldPermission> existing =
+                fpRepo.findByPermissionSetAndObjectName(ps, objectName);
+            FieldPermission saved;
+            if (existing.isPresent()) {
+                saved = existing.get();
+                // Update if fields changed
+                if (!saved.getFields().equals(csv)) {
+                    saved.setFields(csv);
+                    saved = fpRepo.save(saved);
+                }
+            } else {
+                FieldPermission fp = new FieldPermission();
+                fp.setPermissionSet(ps);
+                fp.setObjectName(objectName);
+                fp.setFields(csv);
+                saved = fpRepo.save(fp);
+            }
+            FieldPermissionDto dto = new FieldPermissionDto();
+            dto.setId(saved.getId());
+            dto.setPermissionSetId(id);
+            dto.setObjectName(saved.getObjectName());
+            // Return List<String> version of fields
+            dto.setFields(java.util.Arrays.asList(saved.getFields().split(",")));
+            return dto;
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     @DeleteMapping("/fields/{fieldId}")
@@ -94,21 +113,44 @@ public class PermissionController {
     }
 
     @PostMapping("/sets/{id}/rows")
-    public RowPermissionDto addRow(@PathVariable Long id,
-                                    @RequestBody CreateRowPermissionRequest req) {
+    public java.util.List<RowPermissionDto> addRows(@PathVariable Long id,
+                                                    @RequestBody java.util.List<CreateRowPermissionRequest> reqs) {
         PermissionSet ps = psRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        RowPermission rp = new RowPermission();
-        rp.setPermissionSet(ps);
-        rp.setObjectName(req.getObjectName());
-        rp.setExpression(req.getExpression());
-        rp = rpRepo.save(rp);
-        RowPermissionDto dto = new RowPermissionDto();
-        dto.setId(rp.getId());
-        dto.setPermissionSetId(id);
-        dto.setObjectName(rp.getObjectName());
-        dto.setExpression(rp.getExpression());
-        return dto;
+        return reqs.stream().map(req -> {
+            String objectName = req.getObjectName();
+            String fieldName  = req.getFieldName();
+            String operator   = req.getOperator();
+            String value      = req.getValue();
+            // Deduplicate existing rule
+            RowPermission existing = rpRepo.findByPermissionSetInAndObjectName(
+                    java.util.List.of(ps), objectName)
+                .stream()
+                .filter(rp -> fieldName.equals(rp.getFieldName())
+                           && operator.equals(rp.getOperator())
+                           && value.equals(rp.getValue()))
+                .findFirst().orElse(null);
+            RowPermission saved;
+            if (existing != null) {
+                saved = existing;
+            } else {
+                RowPermission rp = new RowPermission();
+                rp.setPermissionSet(ps);
+                rp.setObjectName(objectName);
+                rp.setFieldName(fieldName);
+                rp.setOperator(operator);
+                rp.setValue(value);
+                saved = rpRepo.save(rp);
+            }
+            RowPermissionDto dto = new RowPermissionDto();
+            dto.setId(saved.getId());
+            dto.setPermissionSetId(id);
+            dto.setObjectName(saved.getObjectName());
+            dto.setFieldName(saved.getFieldName());
+            dto.setOperator(saved.getOperator());
+            dto.setValue(saved.getValue());
+            return dto;
+        }).collect(java.util.stream.Collectors.toList());
     }
 
     @DeleteMapping("/rows/{rowId}")

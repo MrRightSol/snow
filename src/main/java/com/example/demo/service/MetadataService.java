@@ -11,6 +11,7 @@ import com.example.demo.repository.DbObjectRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,14 +49,13 @@ public class MetadataService {
         DataSourceConfig cfg = dsConfigRepo.findById(dataSourceId)
                 .orElseThrow(() -> new RuntimeException("DataSource not found: " + dataSourceId));
         JdbcTemplate jt = dataSourceService.getJdbcTemplate(dataSourceId);
-        // Clear existing metadata
-        dbFieldRepo.deleteByDbObject_DataSourceConfig_Id(dataSourceId);
-        dbObjectRepo.deleteByDataSourceConfig_Id(dataSourceId);
         // Fetch tables and views
         String tblSql = "SELECT TABLE_NAME, TABLE_TYPE FROM INFORMATION_SCHEMA.TABLES"
                 + " WHERE TABLE_TYPE IN ('TABLE','VIEW')";
         List<Map<String, Object>> tables = jt.queryForList(tblSql);
         List<DbObjectDto> result = new ArrayList<>();
+        // Use a single effective timestamp for this import batch
+        LocalDateTime effectiveAt = LocalDateTime.now();
         for (Map<String, Object> row : tables) {
             String name = (String) row.get("TABLE_NAME");
             String type = (String) row.get("TABLE_TYPE");
@@ -63,6 +63,7 @@ public class MetadataService {
             obj.setDataSourceConfig(cfg);
             obj.setObjectName(name);
             obj.setObjectType(type);
+            obj.setEffectiveAt(effectiveAt);
             obj = dbObjectRepo.save(obj);
             // Fetch columns for each object
             String colSql = "SELECT COLUMN_NAME, ORDINAL_POSITION, DATA_TYPE"
@@ -78,6 +79,7 @@ public class MetadataService {
                 field.setColumnName(colName);
                 field.setDataType(dataType);
                 field.setOrdinalPosition(pos);
+                field.setEffectiveAt(effectiveAt);
                 dbFieldRepo.save(field);
             }
             // Build DTO
@@ -97,14 +99,13 @@ public class MetadataService {
     @Transactional
     public Map<Long, List<DbObjectDto>> importMetadataBatch(List<Long> dataSourceIds,
                                                             List<String> objectTypes) {
+        // Use a single effective timestamp for this batch import
+        LocalDateTime effectiveAt = LocalDateTime.now();
         Map<Long, List<DbObjectDto>> result = new HashMap<>();
         for (Long dsId : dataSourceIds) {
             DataSourceConfig cfg = dsConfigRepo.findById(dsId)
                     .orElseThrow(() -> new RuntimeException("DataSource not found: " + dsId));
             JdbcTemplate jt = dataSourceService.getJdbcTemplate(dsId);
-            // clear existing metadata for this DataSource
-            dbFieldRepo.deleteByDbObject_DataSourceConfig_Id(dsId);
-            dbObjectRepo.deleteByDataSourceConfig_Id(dsId);
             List<DbObjectDto> imported = new ArrayList<>();
             for (String ot : objectTypes) {
                 String type = ot.trim().toUpperCase();
@@ -121,6 +122,7 @@ public class MetadataService {
                         obj.setDataSourceConfig(cfg);
                         obj.setObjectName(name);
                         obj.setObjectType(tblType);
+                        obj.setEffectiveAt(effectiveAt);
                         obj = dbObjectRepo.save(obj);
                         String colSql = "SELECT COLUMN_NAME, ORDINAL_POSITION, DATA_TYPE,"
                                       + " CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE, COLUMN_DEFAULT"
@@ -145,6 +147,7 @@ public class MetadataService {
                             field.setDataType(dataType);
                             field.setOrdinalPosition(pos);
                             field.setLength(length);
+                            field.setEffectiveAt(effectiveAt);
                             field.setColumnConstraints(constraint);
                             dbFieldRepo.save(field);
                         }
@@ -165,6 +168,7 @@ public class MetadataService {
                         obj.setDataSourceConfig(cfg);
                         obj.setObjectName(name);
                         obj.setObjectType("PROCEDURE");
+                        obj.setEffectiveAt(effectiveAt);
                         obj = dbObjectRepo.save(obj);
                         String paramSql = "SELECT PARAMETER_NAME, ORDINAL_POSITION, DATA_TYPE,"
                                         + " CHARACTER_MAXIMUM_LENGTH, IS_NULLABLE, PARAMETER_MODE"
@@ -189,6 +193,7 @@ public class MetadataService {
                             field.setOrdinalPosition(pos);
                             field.setLength(length);
                             field.setColumnConstraints(constraint);
+                            field.setEffectiveAt(effectiveAt);
                             dbFieldRepo.save(field);
                         }
                         DbObjectDto dto = new DbObjectDto();
