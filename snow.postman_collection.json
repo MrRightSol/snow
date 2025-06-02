@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "4e80145f-9a53-49c8-9cf7-1d3a9e608192",
 		"name": "snow",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "24931419",
 		"_collection_link": "https://me6666-8103.postman.co/workspace/vps~50271a86-31f3-4c5d-8d00-5145e6e54a14/collection/24931419-4e80145f-9a53-49c8-9cf7-1d3a9e608192?action=share&source=collection_link&creator=24931419"
 	},
@@ -29,18 +29,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/datasources",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/datasources \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n                \"name\":           \"TestSQLServer\",\n                \"url\":\n    \"jdbc:sqlserver://154.12.226.108:1433;databaseName=vps_dude;encrypt=true;trustServerCertificate=true\",\n                \"username\":       \"sa\",\n                \"password\":       \"YourStrong!Passw0rd\",\n                \"driverClassName\":\"com.microsoft.sqlserver.jdbc.SQLServerDriver\",\n                \"instanceName\":   \"\"\n              }'"
 					},
 					"response": []
@@ -50,20 +39,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/datasources/1/test",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources",
-								"1",
-								"test"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources/1/test",
 						"description": "Generated from cURL: curl http://localhost:8080/api/datasources/1/test"
 					},
 					"response": []
@@ -78,20 +54,7 @@
 								"value": "application/json"
 							}
 						],
-						"url": {
-							"raw": "http://localhost:8080/api/datasources/1/import",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources",
-								"1",
-								"import"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources/1/import",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/datasources/1/import \\\n          -H \"Content-Type: application/json\""
 					},
 					"response": []
@@ -101,20 +64,7 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/datasources/1/import",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources",
-								"1",
-								"import"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources/1/import",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/datasources/1/import"
 					},
 					"response": []
@@ -124,20 +74,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/datasources/1/objects",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources",
-								"1",
-								"objects"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources/1/objects",
 						"description": "Generated from cURL: curl http://localhost:8080/api/datasources/1/objects"
 					},
 					"response": []
@@ -147,22 +84,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/datasources/1/objects/10/fields",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"datasources",
-								"1",
-								"objects",
-								"10",
-								"fields"
-							]
-						},
+						"url": "http://localhost:8080/api/datasources/1/objects/10/fields",
 						"description": "Generated from cURL: curl http://localhost:8080/api/datasources/1/objects/10/fields"
 					},
 					"response": []
@@ -191,19 +113,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/permissions/sets",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"permissions",
-								"sets"
-							]
-						},
+						"url": "http://localhost:8080/api/permissions/sets",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/permissions/sets \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n                \"name\":    \"AdminSet\",\n                \"userIds\": [1]\n              }'"
 					},
 					"response": []
@@ -213,20 +123,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/sftp-servers/1/objects",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"sftp-servers",
-								"1",
-								"objects"
-							]
-						},
+						"url": "http://localhost:8080/api/sftp-servers/1/objects",
 						"description": "Generated from cURL: curl http://localhost:8080/api/sftp-servers/1/objects\n              curl http://localhost:8080/api/sftp-servers/1/objects?path=/main/invoices"
 					},
 					"response": []
@@ -250,21 +147,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/permissions/sets/4/operations",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"permissions",
-								"sets",
-								"4",
-								"operations"
-							]
-						},
+						"url": "http://localhost:8080/api/permissions/sets/4/operations",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/permissions/sets/4/operations \\\n          -H \"Content-Type: application/json\" \\\n          -d '[{\"objectName\":\"TEST_TABLE\",\"operations\":[\"C\",\"R\",\"U\",\"D\"]}]'"
 					},
 					"response": []
@@ -288,21 +171,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/permissions/sets/1/fields",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"permissions",
-								"sets",
-								"1",
-								"fields"
-							]
-						},
+						"url": "http://localhost:8080/api/permissions/sets/1/fields",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/permissions/sets/1/fields \\\n                 -H \"Content-Type: application/json\" \\\n                 -d '{\"objectName\":\"test_table\",\"fields\":\"id,name\"}'"
 					},
 					"response": []
@@ -326,21 +195,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/permissions/sets/1/rows",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"permissions",
-								"sets",
-								"1",
-								"rows"
-							]
-						},
+						"url": "http://localhost:8080/api/permissions/sets/1/rows",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/permissions/sets/1/rows \\\n                 -H \"Content-Type: application/json\" \\\n                 -d '{\"objectName\":\"test_table\",\"expression\":\"id = 1\"}'"
 					},
 					"response": []
@@ -364,18 +219,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/apikeys",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"apikeys"
-							]
-						},
+						"url": "http://localhost:8080/api/apikeys",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/apikeys \\\n          -H \"Content-Type: application/json\" \\\n          -d '{ \"permissionSetId\":2 }'"
 					},
 					"response": []
@@ -403,18 +247,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n          -H \"X-API-KEY: test-key\" \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n                \"sql\":      \"SELECT * FROM test_table\",\n                \"serverId\": 1\n              }'"
 					},
 					"response": []
@@ -451,18 +284,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n          -H \"Content-Type: application/json\" \\\n          -H \"X-API-KEY: abcd-1234-...\" \\\n          -H \"X-USER-ID: 1\" \\\n          -d '{\n            \"sql\":\"SELECT * FROM TEST_TABLE\",\n            \"serverId\":1\n          }'"
 					},
 					"response": []
@@ -494,18 +316,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n                 -H \"X-API-KEY: test-key\" \\\n                 -H \"X-USER-ID: 1\" \\\n                 -H \"Content-Type: application/json\" \\\n                 -d '{\"sql\":\"SELECT * FROM test_table\",\"serverId\":1}'"
 					},
 					"response": []
@@ -537,18 +348,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n                 -H \"X-API-KEY: test-key\" \\\n                 -H \"X-USER-ID: 1\" \\\n                 -H \"Content-Type: application/json\" \\\n                 -d '{\"sql\":\"SELECT * FROM test_table\",\"serverId\":1}'"
 					},
 					"response": []
@@ -580,18 +380,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n                 -H \"X-API-KEY: test-key\" \\\n                 -H \"X-USER-ID: 1\" \\\n                 -H \"Content-Type: application/json\" \\\n                 -d '{\"sql\":\"SELECT * FROM test_table\",\"serverId\":1}'"
 					},
 					"response": []
@@ -623,18 +412,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n          -H \"Content-Type: application/json\" \\\n          -H \"X-API-KEY: <your-key>\" \\\n          -H \"X-USER-ID: 1\" \\\n          -d '{ \"sql\":\"INSERT INTO TEST_TABLE (ID,NAME) VALUES (3,\\'Charlie\\')\", \"serverId\":1 }'"
 					},
 					"response": []
@@ -666,18 +444,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n          -H \"Content-Type: application/json\" \\\n          -H \"X-API-KEY: <your-key>\" \\\n          -H \"X-USER-ID: 1\" \\\n          -d '{ \"sql\":\"UPDATE TEST_TABLE SET NAME = \\'Chuck\\' WHERE ID = 3\", \"serverId\":1 }'"
 					},
 					"response": []
@@ -709,18 +476,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/query",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"query"
-							]
-						},
+						"url": "http://localhost:8080/api/query",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/query \\\n          -H \"Content-Type: application/json\" \\\n          -H \"X-API-KEY: <your-key>\" \\\n          -H \"X-USER-ID: 1\" \\\n          -d '{ \"sql\":\"DELETE FROM TEST_TABLE WHERE ID = 3\", \"serverId\":1 }'"
 					},
 					"response": []
@@ -749,18 +505,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/sftp-servers",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"sftp-servers"
-							]
-						},
+						"url": "http://localhost:8080/api/sftp-servers",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/sftp-servers \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n            \"name\":       \"MySftpServer\",\n            \"protocol\":   \"SFTP\",\n            \"host\":       \"sftp.example.com\",\n            \"port\":       22,\n            \"basePath\":   \"/home/data\",\n            \"username\":   \"svc_user\",\n            \"password\":   \"svc_pass\",\n            \"timeout\":    10000,\n            \"passiveMode\": false\n          }'"
 					},
 					"response": []
@@ -784,20 +529,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/sftp-servers/1/credentials",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"sftp-servers",
-								"1",
-								"credentials"
-							]
-						},
+						"url": "http://localhost:8080/api/sftp-servers/1/credentials",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/sftp-servers/1/credentials \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\"permissionSetId\":1,\"expiresAt\":\"2025-06-30T12:00:00\"}'"
 					},
 					"response": []
@@ -821,18 +553,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/sftp-servers",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"sftp-servers"
-							]
-						},
+						"url": "http://localhost:8080/api/sftp-servers",
 						"description": "Generated from cURL: curl -X POST http://localhost:8080/api/sftp-servers \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n                \"name\":\"MySftp\",\n                \"protocol\":\"SFTP\",\n                \"host\":\"example.com\",\n                \"port\":22,\n                \"basePath\":\"/\",\n                \"username\":\"user\",\n                \"password\":\"pass\",\n                \"timeout\":10000,\n                \"passiveMode\":false\n              }'"
 					},
 					"response": []
@@ -842,20 +563,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/sftp-servers/1/credentials",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"sftp-servers",
-								"1",
-								"credentials"
-							]
-						},
+						"url": "http://localhost:8080/api/sftp-servers/1/credentials",
 						"description": "Generated from cURL: curl http://localhost:8080/api/sftp-servers/1/credentials"
 					},
 					"response": []
@@ -875,21 +583,7 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/sftp-servers/1/credentials/{credId}",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"sftp-servers",
-						"1",
-						"credentials",
-						"{credId}"
-					]
-				},
+				"url": "http://localhost:8080/api/sftp-servers/1/credentials/{credId}",
 				"description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/sftp-servers/1/credentials/{credId}"
 			},
 			"response": []
@@ -929,21 +623,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/permissions/sets/1/sftp",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"permissions",
-						"sets",
-						"1",
-						"sftp"
-					]
-				},
+				"url": "http://localhost:8080/api/permissions/sets/1/sftp",
 				"description": "Generated from cURL: curl -X GET http://localhost:8080/api/permissions/sets/1/sftp"
 			},
 			"response": []
@@ -967,21 +647,7 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/api/permissions/sets/1/sftp",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"permissions",
-						"sets",
-						"1",
-						"sftp"
-					]
-				},
+				"url": "http://localhost:8080/api/permissions/sets/1/sftp",
 				"description": "Generated from cURL: curl -X POST http://localhost:8080/api/permissions/sets/1/sftp \\\n          -H \"Content-Type: application/json\" \\\n          -d '{\n                \"serverId\": 1,\n                \"pathPattern\": \"/main/invoices/**\",\n                \"operations\": [\"READ\",\"WRITE\"]\n              }'"
 			},
 			"response": []
@@ -991,22 +657,7 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/permissions/sets/1/sftp/6",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"permissions",
-						"sets",
-						"1",
-						"sftp",
-						"6"
-					]
-				},
+				"url": "http://localhost:8080/api/permissions/sets/1/sftp/6",
 				"description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/permissions/sets/1/sftp/6"
 			},
 			"response": []
