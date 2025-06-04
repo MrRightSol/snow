@@ -13,8 +13,29 @@ import com.example.demo.repository.PermissionSetRepository;
 import com.example.demo.repository.QueryLogRepository;
 import com.example.demo.repository.RowPermissionRepository;
 import com.example.demo.repository.OperationPermissionRepository;
+import com.example.demo.repository.DbCredentialRepository;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.AllColumns;
+import net.sf.jsqlparser.statement.select.AllTableColumns;
+import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.delete.Delete;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import com.example.demo.service.SqlRewriter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -38,6 +59,10 @@ import com.example.demo.service.SimpleSqlParserService;
 import net.sf.jsqlparser.JSQLParserException;
 
 import java.time.LocalDateTime;
+import com.example.demo.domain.DbCredential;
+import com.example.demo.repository.DbCredentialRepository;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -54,6 +79,7 @@ import java.util.Locale;
 @Service
 public class QueryService {
     private final ApiKeyRepository apiKeyRepository;
+    private final com.example.demo.repository.DbCredentialRepository dbCredentialRepository;
     private final FieldPermissionRepository fieldPermissionRepository;
     private final RowPermissionRepository rowPermissionRepository;
     private final DbObjectRepository dbObjectRepository;
@@ -76,7 +102,8 @@ public class QueryService {
                         QueryLogRepository queryLogRepository,
                         OperationPermissionRepository operationPermissionRepository,
                         SqlRewriter sqlRewriter,
-                        SimpleSqlParserService simpleSqlParserService) {
+                        SimpleSqlParserService simpleSqlParserService,
+                        com.example.demo.repository.DbCredentialRepository dbCredentialRepository) {
         this.apiKeyRepository = apiKeyRepository;
         this.fieldPermissionRepository = fieldPermissionRepository;
         this.rowPermissionRepository = rowPermissionRepository;
@@ -88,6 +115,7 @@ public class QueryService {
         this.operationPermissionRepository = operationPermissionRepository;
         this.sqlRewriter = sqlRewriter;
         this.simpleSqlParserService = simpleSqlParserService;
+        this.dbCredentialRepository = dbCredentialRepository;
     }
 
     // Query prefix strategy: no physical prefix for external tables
@@ -127,6 +155,7 @@ public class QueryService {
             String tableName;
             int rowsReturned;
             String adjustedSql;
+            // Determine which JdbcTemplate to use
             JdbcTemplate jt = (serverId != null)
                     ? dataSourceService.getJdbcTemplate(serverId)
                     : defaultJdbcTemplate;
@@ -280,6 +309,187 @@ public class QueryService {
             throw new RuntimeException("Unsupported SQL operation");
         } catch (Exception e) {
             throw new RuntimeException("Error processing query: " + e.getMessage(), e);
+        }
+    }
+    /**
+     * Execute SQL using a DbCredential (Basic Auth) instead of API key.
+     */
+    @Transactional
+    public QueryResponse executeQueryDb(String dbUsername,
+                                        String dbPassword,
+                                        String rawSql,
+                                        Long serverId) {
+        // Validate DB credential
+        DbCredential cred = dbCredentialRepository.findByUsernameAndPassword(dbUsername, dbPassword)
+                .orElseThrow(() -> new RuntimeException("Invalid DB credential"));
+        if (cred.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("DB credential expired");
+        }
+        if (!cred.getDataSource().getId().equals(serverId)) {
+            throw new RuntimeException("DB credential not valid for server: " + serverId);
+        }
+        // Single-permission-set flow
+        java.util.List<PermissionSet> sets = java.util.List.of(cred.getPermissionSet());
+        // Delegate to core logic (copy of executeQuery internals, without API key lookup)
+        try {
+            String cleanedSql = normalizeSql(rawSql);
+            Statement stmt;
+            try {
+                stmt = CCJSqlParserUtil.parse(cleanedSql);
+            } catch (JSQLParserException e) {
+                SimpleSqlParserService.SqlParts parts = simpleSqlParserService.parse(rawSql);
+                throw new RuntimeException(
+                    "Fallback parser extracted tables=" + parts.tables +
+                    ", fields=" + parts.fields,
+                    e
+                );
+            }
+            // AST-based SQL rewriting/execution (same as executeQuery, without API-key logging)
+            String tableName;
+            int rowsReturned;
+            String adjustedSql;
+            // Determine which JdbcTemplate to use
+            JdbcTemplate jt = (serverId != null)
+                    ? dataSourceService.getJdbcTemplate(serverId)
+                    : defaultJdbcTemplate;
+            // Handle basic SELECT * FROM <table>
+            if (stmt instanceof Select) {
+                Select selectStmt = (Select) stmt;
+                if (!(selectStmt.getSelectBody() instanceof PlainSelect)) {
+                    throw new RuntimeException("Only simple SELECT * FROM <table> supported");
+                }
+                PlainSelect plain = (PlainSelect) selectStmt.getSelectBody();
+                // Collect tables
+                List<Table> tables = new ArrayList<>();
+                tables.add((Table) plain.getFromItem());
+                if (plain.getJoins() != null) {
+                    for (Join join : plain.getJoins()) {
+                        FromItem joinItem = join.getRightItem();
+                        if (!(joinItem instanceof Table)) {
+                            throw new RuntimeException("Only simple JOINs on tables supported");
+                        }
+                        tables.add((Table) joinItem);
+                    }
+                }
+                // Expand or validate select items
+                List<SelectItem> origItems = plain.getSelectItems();
+                boolean hasWildcard = origItems.stream().anyMatch(si ->
+                        si instanceof AllColumns || si instanceof AllTableColumns);
+                if (hasWildcard) {
+                    List<SelectItem> newSelectItems = new ArrayList<>();
+                    for (Table tbl : tables) {
+                        String tblName = tbl.getName();
+                        String alias = tbl.getAlias() != null ? tbl.getAlias().getName() : tblName;
+                        List<FieldPermission> fpsList = fieldPermissionRepository
+                                .findByPermissionSetInAndObjectName(sets, tblName);
+                        if (fpsList.isEmpty()) {
+                            throw new RuntimeException("No field permissions for table: " + tblName);
+                        }
+                        Set<String> colNames = new LinkedHashSet<>();
+                        for (FieldPermission fp : fpsList) {
+                            for (String fld : fp.getFields().split(",")) {
+                                String f = fld.trim(); if (!f.isEmpty()) colNames.add(f);
+                            }
+                        }
+                        for (String f : colNames) {
+                            newSelectItems.add(new SelectExpressionItem(new Column(alias + "." + f)));
+                        }
+                    }
+                    plain.setSelectItems(newSelectItems);
+                } else {
+                    // Validate explicit columns
+                    Map<String,String> aliasToTable = new HashMap<>();
+                    for (Table tbl : tables) {
+                        String real = tbl.getName();
+                        String alias = tbl.getAlias() != null ? tbl.getAlias().getName() : real;
+                        aliasToTable.put(alias, real);
+                    }
+                    List<SelectItem> validated = new ArrayList<>();
+                    for (SelectItem si : origItems) {
+                        if (!(si instanceof SelectExpressionItem)) {
+                            throw new RuntimeException("Unsupported select item: " + si);
+                        }
+                        Expression expr = ((SelectExpressionItem) si).getExpression();
+                        if (!(expr instanceof Column)) {
+                            throw new RuntimeException("Only simple column references allowed: " + expr);
+                        }
+                        Column col = (Column) expr;
+                        String prefix = col.getTable() != null ? col.getTable().getName() : null;
+                        String realTable = prefix != null && aliasToTable.containsKey(prefix)
+                                ? aliasToTable.get(prefix)
+                                : (tables.size() == 1 ? tables.get(0).getName() : null);
+                        if (realTable == null) {
+                            throw new RuntimeException("Cannot resolve table for column: " + col);
+                        }
+                        // Check field permission
+                        List<FieldPermission> fps = fieldPermissionRepository.findByPermissionSetInAndObjectName(sets, realTable);
+                        boolean ok = fps.stream().anyMatch(fp -> {
+                            for (String f : fp.getFields().split(",")) {
+                                if (f.trim().equalsIgnoreCase(col.getColumnName())) return true;
+                            }
+                            return false;
+                        });
+                        if (!ok) {
+                            throw new RuntimeException("Not allowed column: " + col);
+                        }
+                        validated.add(si);
+                    }
+                    plain.setSelectItems(validated);
+                }
+                // Enforce row-level permissions
+                Expression rowPredicate = null;
+                for (PermissionSet ps : sets) {
+                    List<RowPermission> rps = rowPermissionRepository
+                            .findByPermissionSetInAndObjectName(sets, tables.get(0).getName());
+                    for (RowPermission rp : rps) {
+                        String prefix = tables.get(0).getAlias() != null
+                                ? tables.get(0).getAlias().getName()
+                                : tables.get(0).getName();
+                        String exprStr = prefix + "." + rp.getFieldName() + " "
+                                + rp.getOperator() + " '" + rp.getValue() + "'";
+                        Expression expr = CCJSqlParserUtil.parseExpression(exprStr);
+                        rowPredicate = (rowPredicate == null)
+                                ? expr : new AndExpression(rowPredicate, expr);
+                    }
+                }
+                if (rowPredicate != null) {
+                    Expression where = plain.getWhere();
+                    plain.setWhere(where != null ? new AndExpression(where, rowPredicate) : rowPredicate);
+                }
+                adjustedSql = selectStmt.toString();
+                List<Map<String,Object>> results = jt.queryForList(adjustedSql);
+                return new QueryResponse(rawSql, adjustedSql, results, results.size());
+            }
+            // INSERT
+            if (stmt instanceof Insert) {
+                var ins = (Insert) stmt;
+                tableName = ins.getTable().getName();
+                enforceOp(sets, tableName, "C");
+                adjustedSql = rawSql;
+                rowsReturned = jt.update(adjustedSql);
+                return new QueryResponse(rawSql, adjustedSql, List.of(), rowsReturned);
+            }
+            // UPDATE
+            if (stmt instanceof Update) {
+                var upd = (Update) stmt;
+                tableName = upd.getTable().getName();
+                enforceOp(sets, tableName, "U");
+                adjustedSql = rawSql;
+                rowsReturned = jt.update(adjustedSql);
+                return new QueryResponse(rawSql, adjustedSql, List.of(), rowsReturned);
+            }
+            // DELETE
+            if (stmt instanceof Delete) {
+                var del = (Delete) stmt;
+                tableName = del.getTable().getName();
+                enforceOp(sets, tableName, "D");
+                adjustedSql = rawSql;
+                rowsReturned = jt.update(adjustedSql);
+                return new QueryResponse(rawSql, adjustedSql, List.of(), rowsReturned);
+            }
+            throw new RuntimeException("Unsupported SQL operation");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
