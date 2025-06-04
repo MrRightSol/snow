@@ -4,18 +4,17 @@ import com.example.demo.domain.SftpCredential;
 import com.example.demo.domain.SftpServerConfig;
 import com.example.demo.repository.SftpCredentialRepository;
 import com.example.demo.service.SftpService;
-import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.server.SshServer;
+import com.example.demo.config.ProxySftpSubsystemFactory;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.session.ServerSession;
-import org.apache.sshd.sftp.server.SftpSubsystemFactory;
+import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -53,14 +52,10 @@ public class SshdSftpProxyConfig {
                         .isPresent();
             }
         });
+        // Proxy SFTP subsystem to remote servers
         sshd.setSubsystemFactories(
-            Collections.singletonList(new SftpSubsystemFactory())
+            Collections.singletonList(new ProxySftpSubsystemFactory(credRepo, sftpService))
         );
-        VirtualFileSystemFactory vfs = new VirtualFileSystemFactory();
-        credRepo.findAll().forEach(c ->
-            vfs.setUserHomeDir(c.getUsername(), Paths.get(c.getServer().getBasePath()))
-        );
-        sshd.setFileSystemFactory(vfs);
         sshd.start();
         return sshd;
     }
